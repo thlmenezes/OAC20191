@@ -1,13 +1,13 @@
-sources  := $(wildcard src/*.c)
-objects  := $(sources:src/%.c=obj/%.o)
+sources  := $(wildcard src/*.cpp)
+objects  := $(sources:src/%.cpp=obj/%.o)
 
-CC       := gcc
-CFLAGS   := -Wall -pedantic -g
+CC       := g++
+CFLAGS   := -std=c++11 -Wall -pedantic -g
 
 rars: $(objects)
 	$(LINK.o) $^ -o $@
 
-obj/%.o : src/%.c
+obj/%.o : src/%.cpp
 	$(COMPILE.c) $(OUTPUT_OPTION) $<
 
 clean:
