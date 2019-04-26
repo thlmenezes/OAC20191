@@ -27,26 +27,45 @@ int main(){
     sb(0,1,0x03);
     sb(0,2,0x02);
     sb(0,3,0x01);
-    dump_mem(0,7);
-    getchar();
 
     sb(4,0,0xff);
     sb(4,1,0xfe);
     sb(4,2,0xfd);
     sb(4,3,0xfc);
-    dump_mem(0,7);
-    getchar();
 
     sh(8,0,0xfff0);
     sh(8,2,0x8c);
-    dump_mem(0,7);
-    getchar();
 
     sw(12,0,0xff);
     sw(16,0,0xffff);
     sw(20,0,0xffffffff);
     sw(24,0,0x80000000);
     dump_mem(0,7);
+
+    print("%02x %d\n", lb(0,0), lb(0,0));
+    print("%02x %d\n", lb(0,1), lb(0,1));
+    print("%02x %d\n", lb(0,2), lb(0,2));
+    print("%02x %d\n", lb(0,3), lb(0,3));
+    
+    print("%02x %d\n", lb(4,0) & 0xff, lb(4,0));
+    print("%02x %d\n", lb(4,1) & 0xff, lb(4,1));
+    print("%02x %d\n", lb(4,2) & 0xff, lb(4,2));
+    print("%02x %d\n", lb(4,3) & 0xff, lb(4,3));
+
+    print("%d\n", lbu(4,0));
+    print("%d\n", lbu(4,1));
+    print("%d\n", lbu(4,2));
+    print("%d\n", lbu(4,3));
+
+    print("%04x %d\n", lh(8,0) & 0xffff, lh(8,0) & 0xffff);
+    print("%04x %d\n", lh(8,2) & 0xffff, lh(8,2) & 0xffff);
+
+    print("%04x %d\n", lhu(8,0) & 0xffff, lhu(8,0) & 0xffff);
+    print("%04x %d\n", lhu(8,2) & 0xffff, lhu(8,2) & 0xffff);
+
+    print("%08x %d\n", lw(12,0));
+    print("%08x %d\n", lw(16,0));
+    print("%08x %d\n", lw(20,0));
     return 0;
 }
 
@@ -90,7 +109,7 @@ inline int32_t  lh (uint32_t address, int32_t kte){
 }
 
 inline int32_t  lhu(uint32_t address, int32_t kte){
-    return mem[get_address(address,kte)] >> 16 * ( (address + kte) & 0x3 ) & 0xffff;
+    return mem[get_address(address,kte)] >> 8 * ( ( address + kte ) & 0x3 ) & 0xffff;
 }
 
 inline int32_t  lb (uint32_t address, int32_t kte){
@@ -119,17 +138,9 @@ inline void sw(uint32_t address, int32_t kte, int32_t dado){
 }
 
 inline void sh(uint32_t address, int32_t kte, int16_t dado){
-    // return mem[get_address(address,kte)] >> 16 * ( (address + kte) & 0x3 ) & 0xffff;
-    // int32_t bytes = dado & 0xffff;
-    // print("0x%08x\n", bytes);
     mem[get_address(address,kte)] = set_field(mem[get_address(address,kte)], (kte >> 1)*16, 0xffff, dado);
-    print("0x%08x\n", mem[get_address(address,kte)]);
 }
 
 inline void sb(uint32_t address, int32_t kte, int8_t dado){
-    // int32_t bytes = dado & 0xff;
-    // print("0x%08x\n", bytes);
-    // return (word & ~(mask << index)) | ((value & mask) << index);
     mem[get_address(address,kte)] = set_field(mem[get_address(address,kte)], kte*8, 0xff, dado);
-    print("0x%08x\n", mem[get_address(address,kte)]);
 }
