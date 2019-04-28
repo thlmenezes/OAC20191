@@ -23,6 +23,7 @@ inline void sh(uint32_t address, int32_t kte, int16_t dado);
 inline void sb(uint32_t address, int32_t kte, int8_t dado);
 
 int main(){
+
     sb(0,0,0x04);
     sb(0,1,0x03);
     sb(0,2,0x02);
@@ -66,6 +67,7 @@ int main(){
     print("%08x %d\n", lw(12,0));
     print("%08x %d\n", lw(16,0));
     print("%08x %d\n", lw(20,0));
+
     return 0;
 }
 
