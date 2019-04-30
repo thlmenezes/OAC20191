@@ -1,3 +1,8 @@
+/**
+ * Id:     17/0045919
+ * Name:   Thales Menezes
+ * GitHub: @thaleslim
+ */
 #include <stdio.h>
 #include <stdint.h>
 
@@ -11,6 +16,7 @@ void dump_mem(uint32_t addr, uint32_t wsize);
 inline uint32_t get_address(uint32_t address, int32_t kte);
 inline int32_t  extend_signal(int32_t word, uint32_t wsize);
 
+inline int32_t  get_field(int32_t word, uint32_t index, uint32_t mask);
 inline int32_t  lw (uint32_t address, int32_t kte);
 inline int32_t  lh (uint32_t address, int32_t kte);
 inline int32_t  lhu(uint32_t address, int32_t kte);
@@ -57,7 +63,7 @@ int main(){
     print("%d\n", lbu(4,1));
     print("%d\n", lbu(4,2));
     print("%d\n", lbu(4,3));
-
+        
     print("%04x %d\n", lh(8,0) & 0xffff, lh(8,0) & 0xffff);
     print("%04x %d\n", lh(8,2) & 0xffff, lh(8,2) & 0xffff);
 
@@ -73,62 +79,90 @@ int main(){
 
 void dump_mem(uint32_t addr, uint32_t wsize) {
     /**
-     * Print \a{wsize} word' content as hex,
-     * beginning from \a{addr}
+     * Print \a{wsize} word' as hex, beginning from \a{addr}
      */
     int32_t konstante = 0;
-    while(wsize--)
-        // print("0x%x", 0); // print
-        { print("mem[%d] = 0x%08x\n", (addr+konstante) >> 2, lw(addr,konstante)); konstante += 4; }
+    while(wsize--){
+        print("mem[%d] = 0x%08x\n", get_address(addr,konstante), lw(addr,konstante));
+        konstante += 4;
+    }
 }
 
 inline uint32_t get_address(uint32_t address, int32_t kte){
     /**
-     * Calculate the memory address
+     * Calculate a memory index ( mem[idx] ) from \a{address}
+     * @note: equivalent return floor( (address + kte) / 4 ); 
      */
     return ( address + kte ) >> 2;
-    // address//4 + kte
 }
 
 inline int32_t  extend_signal(int32_t word, uint32_t wsize){
-    if( word >> (wsize-1) )
-        return word | (-1 << wsize);
-    return word;
+    /**
+     * Signal extension method
+     * if ( word < 0 )
+     *      extend 1
+     * else
+     *      extend 0
+     */
+    return word >> (wsize-1) ? word | (-1 << wsize) : word;
+}
+
+inline int32_t  get_field(int32_t word, uint32_t index, uint32_t mask){
+    /**
+     * Isolate \a{mask} bytes from \a{word}, startin' from \a{index}
+     */
+    return word >> index & mask;
 }
 
 inline int32_t  lw (uint32_t address, int32_t kte){
     /**
      * Extract a word from memory
+     * @exceptions: if ( address % 4 != 0 ) throw Not Alligned
+     * @todo:
+     *   Error in <file> line 7: \
+     *   Runtime exception at 0x00000008: \
+     *   Load address not aligned to word boundary 0x00002002
      */
-    if( address & 0x3 ) //if ( address % 4 != 0 )
-        throw "Address not alligned with word boundaries";
+    if( address + kte & 0x2 )
+        throw "Load address not aligned to word boundary";
     return mem[get_address(address,kte)];
-    // mem[address//4 + kte]
 }
 
 inline int32_t  lh (uint32_t address, int32_t kte){
+    /**
+     * Sign-extended load half-word 
+     */
     return extend_signal(lhu(address,kte),16);
 }
 
 inline int32_t  lhu(uint32_t address, int32_t kte){
-    return mem[get_address(address,kte)] >> 8 * ( ( address + kte ) & 0x3 ) & 0xffff;
+    /**
+     * Load half-word from memory
+     * @exceptions: if ( address % 2 != 0 ) throw Not Alligned
+     */
+    if ( address + kte & 0x1 )
+        throw "Load address not aligned on halfword boundary ";
+    return get_field( mem[get_address(address,kte)], 8 * ( ( address + kte ) & 0x2 ), 0xffff);
 }
 
 inline int32_t  lb (uint32_t address, int32_t kte){
+    /**
+     * Sign-extended load byte 
+     */
     return extend_signal(lbu(address,kte),8);
 }
 
 inline int32_t  lbu(uint32_t address, int32_t kte){
     /**
-     * Extract a byte from a word
-     * NOTE: operator precedence:
-     * array subscripting([]) -> multiply(*) -> subtract(-) -> shift( >> ) -> bitwise AND (&)
+     * Load byte from memory
      */
-    return mem[get_address(address,kte)] >> 8 * ( (address + kte) & 0x3 ) & 0xff;
-    // lw() >> 8 * (address % 4) & 0xff
+    return get_field( mem[get_address(address,kte)], 8 * ( (address + kte) & 0x2 ), 0xff);
 }
 
 inline int32_t  set_field(int32_t word, uint32_t index, uint32_t mask, int32_t value){
+    /**
+     * Inserts \a{mask} bytes from \a{value} to \a{word}, startin' from \a{index}
+     */
     return (word & ~(mask << index)) | ((value & mask) << index);
 }
 
@@ -136,13 +170,25 @@ inline void sw(uint32_t address, int32_t kte, int32_t dado){
     /**
      * Write a word in memory
      */
+    if( address + kte & 0x2 )
+        throw "Load address not aligned to word boundary";
     mem[get_address(address,kte)] = dado;
 }
 
 inline void sh(uint32_t address, int32_t kte, int16_t dado){
-    mem[get_address(address,kte)] = set_field(mem[get_address(address,kte)], (kte >> 1)*16, 0xffff, dado);
+    /**
+     * Write a half-word in memory
+     * @note: (address + kte) % 4 * 8 -> upper(1) or lower(0) half-word
+     */
+    if ( address + kte & 0x1 )
+        throw "Load address not aligned on halfword boundary ";
+    mem[get_address(address,kte)] = set_field(mem[get_address(address,kte)], 8 * ( (address + kte) & 0x2 ), 0xffff, dado);
 }
 
 inline void sb(uint32_t address, int32_t kte, int8_t dado){
-    mem[get_address(address,kte)] = set_field(mem[get_address(address,kte)], kte*8, 0xff, dado);
+    /**
+     * Write a byte in memory
+     * @note: (address + kte) % 4 * 8 -> byte index inside word [0,8,16,24]
+     */
+    mem[get_address(address,kte)] = set_field(mem[get_address(address,kte)], 8 * ( (address + kte) & 0x2 ) , 0xff, dado);
 }
