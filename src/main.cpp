@@ -123,7 +123,7 @@ inline int32_t  lw (uint32_t address, int32_t kte){
      *   Runtime exception at 0x00000008: \
      *   Load address not aligned to word boundary 0x00002002
      */
-    if( address + kte & 0x2 )
+    if( address + kte & 0x3 )
         throw "Load address not aligned to word boundary";
     return mem[get_address(address,kte)];
 }
@@ -142,7 +142,7 @@ inline int32_t  lhu(uint32_t address, int32_t kte){
      */
     if ( address + kte & 0x1 )
         throw "Load address not aligned on halfword boundary ";
-    return get_field( mem[get_address(address,kte)], 8 * ( ( address + kte ) & 0x2 ), 0xffff);
+    return get_field( mem[get_address(address,kte)], ( (address + kte) & 0x3 ) << 3, 0xffff);
 }
 
 inline int32_t  lb (uint32_t address, int32_t kte){
@@ -156,7 +156,7 @@ inline int32_t  lbu(uint32_t address, int32_t kte){
     /**
      * Load byte from memory
      */
-    return get_field( mem[get_address(address,kte)], 8 * ( (address + kte) & 0x2 ), 0xff);
+    return get_field( mem[get_address(address,kte)], ( (address + kte) & 0x3 ) << 3, 0xff);
 }
 
 inline int32_t  set_field(int32_t word, uint32_t index, uint32_t mask, int32_t value){
@@ -170,7 +170,7 @@ inline void sw(uint32_t address, int32_t kte, int32_t dado){
     /**
      * Write a word in memory
      */
-    if( address + kte & 0x2 )
+    if( address + kte & 0x3 )
         throw "Load address not aligned to word boundary";
     mem[get_address(address,kte)] = dado;
 }
@@ -182,13 +182,16 @@ inline void sh(uint32_t address, int32_t kte, int16_t dado){
      */
     if ( address + kte & 0x1 )
         throw "Load address not aligned on halfword boundary ";
-    mem[get_address(address,kte)] = set_field(mem[get_address(address,kte)], 8 * ( (address + kte) & 0x2 ), 0xffff, dado);
+    mem[get_address(address,kte)] = set_field(mem[get_address(address,kte)], ( (address + kte) & 0x3 ) << 3, 0xffff, dado);
 }
 
 inline void sb(uint32_t address, int32_t kte, int8_t dado){
     /**
      * Write a byte in memory
      * @note: (address + kte) % 4 * 8 -> byte index inside word [0,8,16,24]
+     * @note: (address + kte) % 4 == (address + kte) & 0x3, because selects
+     * the first 2 bits from the word (0b11 = 0x3)
      */
-    mem[get_address(address,kte)] = set_field(mem[get_address(address,kte)], 8 * ( (address + kte) & 0x2 ) , 0xff, dado);
+    mem[get_address(address,kte)] = set_field(mem[get_address(address,kte)], ( (address + kte) & 0x3 ) << 3, 0xff, dado);
+    // print("%d\n0x%08x\n", (address + kte) & 0x3 ,mem[get_address(address,kte)]);
 }
