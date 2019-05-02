@@ -11,4 +11,6 @@ obj/%.o : src/%.cpp
 	$(COMPILE.c) $(OUTPUT_OPTION) $<
 
 clean:
-	rm $(wildcard obj/*.o) rars
+ifneq ($(wildcard obj/*.o),)
+	rm obj/*.o rars
+endif
