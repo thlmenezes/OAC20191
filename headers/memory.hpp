@@ -32,7 +32,7 @@ inline void     sh (uint32_t address, int32_t kte, int16_t dado);
 inline void     sb (uint32_t address, int32_t kte, int8_t dado);
 // Showcase
 void   dump_mem (uint32_t addr, uint32_t wsize);
-
+//todo: dump_mem return string
 
 //--------------------------------------------------------------
 inline uint32_t get_address(uint32_t address, int32_t kte){
