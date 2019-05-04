@@ -3,9 +3,9 @@
  * author  Thales Menezes
  * GitHub  @thaleslim
  * date    01/05/2019
- * brief   Define a simulated secondary
- * memory, alongside with it' access and
- * update procedures.
+ * brief   Define access and update
+ * procedures to a simulated random
+ * access memory.
  */
 
 #ifndef __MEMORY_HPP__
@@ -14,10 +14,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "word.hpp"
-
-// Secondary Memory
-#define MEM_SIZE 4096
-int32_t mem[MEM_SIZE];
+#include "control.hpp"
 
 inline uint32_t get_address(uint32_t address, int32_t kte);
 // Loads
@@ -31,8 +28,10 @@ inline void     sw (uint32_t address, int32_t kte, int32_t dado);
 inline void     sh (uint32_t address, int32_t kte, int16_t dado);
 inline void     sb (uint32_t address, int32_t kte, int8_t dado);
 // Showcase
-void   dump_mem (uint32_t addr, uint32_t wsize);
-//todo: dump_mem return string
+//TODO: dump_mem with hex and decimal
+void   dump_mem (uint32_t start, uint32_t end, char format);
+//TODO: dump_mem return string
+void   dump_mem (uint32_t  addr, uint32_t wsize);
 
 //--------------------------------------------------------------
 inline uint32_t get_address(uint32_t address, int32_t kte){
@@ -49,7 +48,7 @@ inline int32_t  lw (uint32_t address, int32_t kte){
     /**
      * Extract a word from memory
      * exceptions: if ( address % 4 != 0 ) throw Not Alligned
-     * todo:
+     * TODO:
      *   Error in <file> line 7: \
      *   Runtime exception at 0x00000008: \
      *   Load address not aligned to word boundary 0x00002002
@@ -128,8 +127,17 @@ inline void sb(uint32_t address, int32_t kte, int8_t dado){
 }//End sb()
 
 // Showcase
+/* //--------------------------------------------------------------
+void   dump_mem (int start, int end, char format){
+    int32_t konstante = 0;
+    while(wsize--){
+        printf("mem[%d] = 0x%08x\n", get_address(addr,konstante), lw(addr,konstante));
+        konstante += 4;
+    }
+}//End dump_mem() */
+
 //--------------------------------------------------------------
-void dump_mem(uint32_t addr, uint32_t wsize) {
+void   dump_mem (uint32_t addr, uint32_t wsize) {
     /**
      * Print \a{wsize} word' as hex, beginning from \a{addr}
      */

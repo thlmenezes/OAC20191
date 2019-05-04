@@ -10,9 +10,15 @@
 #include <stdint.h>
 
 #define print printf
+// TODO: 2
+bool load_text(FILE* bin_text, uint32_t begin);
+bool load_data(FILE* bin_data, uint32_t begin);
 
 int main(){
-
+    /**
+     * Ler e inserir na memória
+     */
+    /*
     sb(0,0,0x04);
     sb(0,1,0x03);
     sb(0,2,0x02);
@@ -55,7 +61,7 @@ int main(){
 
     print("%08x %d\n", lw(12,0));
     print("%08x %d\n", lw(16,0));
-    print("%08x %d\n", lw(20,0));
+    print("%08x %d\n", lw(20,0)); //*/
     
     return 0;
 }
