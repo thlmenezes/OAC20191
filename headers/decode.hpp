@@ -47,11 +47,18 @@ enum FUNCT7 {
     ADD7=0, SUB7=0x20, SRA7=0x20, SRL7=0, SRLI7=0x00, SRAI7=0x20
 };
 
+static void clear(){
+    opcode = 0; rs1 = 0; rs2 = 0; rd = 0; shamt = 0; funct3 = 0; funct7 = 0;
+    imm12_i = 0; imm12_s = 0; imm13 = 0; imm20_u = 0; imm21 = 0;
+    return;
+}
+
 void decode(){
     /**
      * Split ri in different instruction possible fields
      */
-    opcode = get_field(ri,0,0x3f);
+    clear();
+    opcode = get_field(ri,0,0x7f);
     switch(opcode){
         // type U
         case LUI:

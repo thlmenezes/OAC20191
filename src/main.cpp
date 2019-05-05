@@ -15,8 +15,14 @@ bool load_text(FILE* bin_text, uint32_t begin);
 bool load_data(FILE* bin_data, uint32_t begin);
 
 int main(){
-    ri = 0x01c000ef;
-    print("rd : 0x%08x\nfunct3 : 0x%08x\nrs1 :0x%08x\nimm12_i : 0x%08x\n", get_field(0x38393,7,0x1f), get_field(0x38393,12,0x7), get_field(0x38393,15,0x1f), get_field(0x38393,20,0xfff));
+    // ri = 0x1c000ef;
+    ri = 0x23a303;
+    decode();
+    print("opcode:\t0x%08x\n", opcode);
+    print("rs1:\t0x%08x\nrs2:\t0x%08x\nrd:\t0x%08x\n", rs1,rs2,rd);
+    print("shamt:\t0x%08x\nfunct3:\t0x%08x\nfunct7:\t0x%08x\n", shamt, funct3, funct7);
+    print("imm12_i:0x%08x\nimm12_s:0x%08x\nimm13:\t0x%08x\n", imm12_i, imm12_s, imm13);
+    print("imm20_u:0x%08x\nimm21:\t0x%08x\n", imm20_u, imm21);
     /**
      * Ler e inserir na memória
      */
