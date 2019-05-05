@@ -3,7 +3,7 @@
  * author  Thales Menezes
  * GitHub  @thaleslim
  */
-
+#include "../headers/decode.hpp"
 #include "../headers/memory.hpp"
 #include "../headers/word.hpp"
 #include <stdio.h>
@@ -15,6 +15,8 @@ bool load_text(FILE* bin_text, uint32_t begin);
 bool load_data(FILE* bin_data, uint32_t begin);
 
 int main(){
+    ri = 0x01c000ef;
+    print("rd : 0x%08x\nfunct3 : 0x%08x\nrs1 :0x%08x\nimm12_i : 0x%08x\n", get_field(0x38393,7,0x1f), get_field(0x38393,12,0x7), get_field(0x38393,15,0x1f), get_field(0x38393,20,0xfff));
     /**
      * Ler e inserir na memória
      */
