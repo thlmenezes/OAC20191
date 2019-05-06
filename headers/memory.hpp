@@ -28,10 +28,8 @@ inline void     sw (uint32_t address, int32_t kte, int32_t dado);
 inline void     sh (uint32_t address, int32_t kte, int16_t dado);
 inline void     sb (uint32_t address, int32_t kte, int8_t dado);
 // Showcase
-//TODO: dump_mem with hex and decimal
-void   dump_mem (uint32_t start, uint32_t end, char format);
+void   dump_mem (uint32_t start, uint32_t end, char format = 'h');
 //TODO: dump_mem return string
-void   dump_mem (uint32_t  addr, uint32_t wsize);
 
 //--------------------------------------------------------------
 inline uint32_t get_address(uint32_t address, int32_t kte){
@@ -127,23 +125,17 @@ inline void sb(uint32_t address, int32_t kte, int8_t dado){
 }//End sb()
 
 // Showcase
-/* //--------------------------------------------------------------
-void   dump_mem (int start, int end, char format){
-    int32_t konstante = 0;
-    while(wsize--){
-        printf("mem[%d] = 0x%08x\n", get_address(addr,konstante), lw(addr,konstante));
-        konstante += 4;
-    }
-}//End dump_mem() */
-
 //--------------------------------------------------------------
-void   dump_mem (uint32_t addr, uint32_t wsize) {
+void   dump_mem (uint32_t start, uint32_t end, char format) {
     /**
-     * Print \a{wsize} word' as hex, beginning from \a{addr}
+     * Print content from mem[\a{start}] to mem[\a{end}] as hex or dec
      */
     int32_t konstante = 0;
-    while(wsize--){
-        printf("mem[%d] = 0x%08x\n", get_address(addr,konstante), lw(addr,konstante));
+    while( start + konstante <= end ){
+        if( format == 'h' )
+            printf("mem[ 0x%08x ] = 0x%08x\n", start + konstante, lw(start,konstante));
+        else
+            printf("mem[ 0x%08x ] = %8d\n", start + konstante, lw(start,konstante));
         konstante += 4;
     }
 }//End dump_mem()

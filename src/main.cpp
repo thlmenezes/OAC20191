@@ -27,12 +27,13 @@ int main(){
     // */
     FILE * file;
     file = fopen("text.bin","rb");
-    print("%d\n", load_text(file));
+    load_text(file);
     fclose(file);
-    dump_mem(0,10);
+    dump_mem(0,0x54);
+    print("\n\n");
     file = fopen("data.bin","rb");
-    print("%d\n", load_data(file));
-    dump_mem(0x2000,10);
+    load_data(file);
+    dump_mem(0x2000,0x204c);
 }
 
 bool load_file(FILE* bin_file, uint32_t begin, uint32_t max){
