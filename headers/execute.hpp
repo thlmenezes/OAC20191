@@ -18,8 +18,7 @@
 void execute(){
     // TODO: ECALL exit??
     switch(opcode){
-        default:
-            break;
+        case 
     }
 }
 
