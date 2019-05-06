@@ -30,7 +30,7 @@ inline void     sb (uint32_t address, int32_t kte, int8_t dado);
 // Showcase
 void   dump_mem (uint32_t start, uint32_t end, char format = 'h');
 //TODO: dump_mem return string
-
+//TODO: loads -> kte = 0 / stores -> dado, address, kte = 0
 //--------------------------------------------------------------
 inline uint32_t get_address(uint32_t address, int32_t kte){
     /**

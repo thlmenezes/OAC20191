@@ -6,6 +6,7 @@
 #include "../headers/decode.hpp"
 #include "../headers/memory.hpp"
 #include "../headers/word.hpp"
+#include "../headers/execute.hpp"
 #include <stdio.h>
 #include <stdint.h>
 
@@ -16,10 +17,15 @@ bool load_text(FILE* bin_text, uint32_t begin = 0x0);
 bool load_data(FILE* bin_data, uint32_t begin = 0x2000);
 
 int main(){
-    dump_reg();
+    reg[17] = 10;
+    sw(0,0,0x73);
+    // sw(0x2000,0,0x636261);
+    reg[10] = 0x2;
+    run();
+    /* dump_reg();
     print("\n\n");
-    /*  ri = 0x1c000ef; */
-    ri = 0x23a303;
+    // ri = 0x1c000ef; */
+    /* ri = 0x23a303;
     decode();
     print("opcode:\t0x%08x\n", opcode);
     print("rs1:\t0x%08x\nrs2:\t0x%08x\nrd:\t0x%08x\n", rs1,rs2,rd);
