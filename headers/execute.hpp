@@ -16,6 +16,7 @@
 #include "control.hpp"
 
 void execute(){
+    // TODO: ECALL exit??
     switch(opcode){
         default:
             break;
@@ -29,8 +30,7 @@ void step(){
 }
 
 void run(){
-    // TODO: ecall exit && pc < 0xffd
-    while(opcode != 10 && pc < 0xffd){
+    while(pc < 0xffd){
         step();
     }
 }

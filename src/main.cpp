@@ -10,66 +10,61 @@
 #include <stdint.h>
 
 #define print printf
-// TODO: 2
-bool load_text(FILE* bin_text, uint32_t begin);
-bool load_data(FILE* bin_data, uint32_t begin);
+
+bool load_file(FILE* bin_file, uint32_t begin, uint32_t max);
+bool load_text(FILE* bin_text, uint32_t begin = 0x0);
+bool load_data(FILE* bin_data, uint32_t begin = 0x2000);
 
 int main(){
-    // ri = 0x1c000ef;
+    /* ri = 0x1c000ef;
     ri = 0x23a303;
     decode();
     print("opcode:\t0x%08x\n", opcode);
     print("rs1:\t0x%08x\nrs2:\t0x%08x\nrd:\t0x%08x\n", rs1,rs2,rd);
     print("shamt:\t0x%08x\nfunct3:\t0x%08x\nfunct7:\t0x%08x\n", shamt, funct3, funct7);
     print("imm12_i:0x%08x\nimm12_s:0x%08x\nimm13:\t0x%08x\n", imm12_i, imm12_s, imm13);
-    print("imm20_u:0x%08x\nimm21:\t0x%08x\n", imm20_u, imm21);
-    /**
-     * Ler e inserir na memória
-     */
-    /*
-    sb(0,0,0x04);
-    sb(0,1,0x03);
-    sb(0,2,0x02);
-    sb(0,3,0x01);
+    print("imm20_u:0x%08x\nimm21:\t0x%08x\n", imm20_u, imm21); 
+    // */
+    FILE * file;
+    file = fopen("text.bin","rb");
+    print("%d\n", load_text(file));
+    fclose(file);
+    dump_mem(0,10);
+    file = fopen("data.bin","rb");
+    print("%d\n", load_data(file));
+    dump_mem(0x2000,10);
+}
 
-    sb(4,0,0xff);
-    sb(4,1,0xfe);
-    sb(4,2,0xfd);
-    sb(4,3,0xfc);
-
-    sh(8,0,0xfff0);
-    sh(8,2,0x8c);
-
-    sw(12,0,0xff);
-    sw(16,0,0xffff);
-    sw(20,0,0xffffffff);
-    sw(24,0,0x80000000);
-    dump_mem(0,7);
-
-    print("%02x %d\n", lb(0,0), lb(0,0));
-    print("%02x %d\n", lb(0,1), lb(0,1));
-    print("%02x %d\n", lb(0,2), lb(0,2));
-    print("%02x %d\n", lb(0,3), lb(0,3));
+bool load_file(FILE* bin_file, uint32_t begin, uint32_t max){
+    if( bin_file == NULL )
+        return false;
     
-    print("%02x %d\n", lb(4,0) & 0xff, lb(4,0));
-    print("%02x %d\n", lb(4,1) & 0xff, lb(4,1));
-    print("%02x %d\n", lb(4,2) & 0xff, lb(4,2));
-    print("%02x %d\n", lb(4,3) & 0xff, lb(4,3));
-
-    print("%d\n", lbu(4,0));
-    print("%d\n", lbu(4,1));
-    print("%d\n", lbu(4,2));
-    print("%d\n", lbu(4,3));
-        
-    print("%04x %d\n", lh(8,0) & 0xffff, lh(8,0) & 0xffff);
-    print("%04x %d\n", lh(8,2) & 0xffff, lh(8,2) & 0xffff);
-
-    print("%04x %d\n", lhu(8,0) & 0xffff, lhu(8,0) & 0xffff);
-    print("%04x %d\n", lhu(8,2) & 0xffff, lhu(8,2) & 0xffff);
-
-    print("%08x %d\n", lw(12,0));
-    print("%08x %d\n", lw(16,0));
-    print("%08x %d\n", lw(20,0)); //*/
+    long fStart = ftell(bin_file), fSize;
     
-    return 0;
+    fseek (bin_file, 0 , SEEK_END);
+
+    fSize  = ftell(bin_file) - fStart;
+    
+    fseek (bin_file, -1*fSize, SEEK_CUR);
+
+    if( fSize & 0x3 || fSize > max )
+        return false;
+
+    int32_t instruction = 0x0;
+    int32_t konstant = begin;
+
+    while( fread(&instruction,4,1,bin_file) ){
+        sw(konstant,0,instruction);
+        konstant += 4;
+    }
+
+    return true;
+}
+
+bool load_text(FILE* bin_text, uint32_t begin){
+    return load_file(bin_text, begin, 0xffc);
+}
+
+bool load_data(FILE* bin_data, uint32_t begin){
+    return load_file(bin_data, begin, 0x2fff);
 }

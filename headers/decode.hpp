@@ -7,7 +7,6 @@
  * decoding procedures and resulting
  * fields.
  */
-// TODO: 1
 #ifndef __DECODE_HPP__
 #define __DECODE_HPP__
 
