@@ -228,5 +228,6 @@ void run(){
         printf("(dropped off bottom) --");
     else
         printf("--");
+    printf("\n");
 }
 #endif

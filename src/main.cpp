@@ -21,14 +21,12 @@ int main(){
     file = fopen("text.bin","rb");
     load_text(file);
     fclose(file);
-    dump_mem(0,0x54);
-    print("\n\n");
+    // dump_mem(0,0x54);
     file = fopen("data.bin","rb");
     load_data(file);
-    dump_mem(0x2000,0x204c);
-    
+    // dump_mem(0x2000,0x204c);
+    fclose(file);
     run();
-    
 }
 
 bool load_file(FILE* bin_file, uint32_t begin, uint32_t max){
