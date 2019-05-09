@@ -51,7 +51,7 @@ inline int32_t  lw (uint32_t address, int32_t kte){
      *   Runtime exception at 0x00000008: \
      *   Load address not aligned to word boundary 0x00002002
      */
-    if( address + kte & 0x3 )
+    if( (address + kte) & 0x3 )
         throw "Load address not aligned to word boundary";
     return mem[get_address(address,kte)];
 }//End lw()
@@ -70,7 +70,7 @@ inline int32_t  lhu(uint32_t address, int32_t kte){
      * Load unsigned half-word from memory
      * exceptions: if ( address % 2 != 0 ) throw Not Alligned
      */
-    if ( address + kte & 0x1 )
+    if ( (address + kte) & 0x1 )
         throw "Load address not aligned on halfword boundary ";
     return get_field( mem[get_address(address,kte)], ( (address + kte) & 0x3 ) << 3, 0xffff);
 }//End lhu()
@@ -97,7 +97,7 @@ inline void sw(uint32_t address, int32_t kte, int32_t dado){
     /**
      * Write a word in memory
      */
-    if( address + kte & 0x3 )
+    if( (address + kte) & 0x3 )
         throw "Load address not aligned to word boundary";
     mem[get_address(address,kte)] = dado;
 }//End sw()
@@ -108,7 +108,7 @@ inline void sh(uint32_t address, int32_t kte, int16_t dado){
      * Write a half-word in memory
      * note: (address + kte) % 4 * 8 -> upper(1) or lower(0) half-word
      */
-    if ( address + kte & 0x1 )
+    if ( (address + kte) & 0x1 )
         throw "Load address not aligned on halfword boundary ";
     mem[get_address(address,kte)] = set_field(mem[get_address(address,kte)], ( (address + kte) & 0x3 ) << 3, 0xffff, dado);
 }//End sh()

@@ -56,7 +56,7 @@ void dump_reg(char format = 'h'){
 int32_t mem[MEM_SIZE];
 
 inline void fetch(){
-    ri = mem[pc];
+    ri = mem[pc >> 2];
     pc += 4;
 }
 
