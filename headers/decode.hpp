@@ -106,7 +106,7 @@ void decode(){
                             get_field(ri,31,0x1)  << 12 | /* [12]*/
                             get_field(ri, 7,0x1)  << 11 | /* [11]*/
                             get_field(ri,25,0x3f) << 5  | /* [10:5]*/
-                            get_field(ri, 8,0x1f) << 1  | /* [4:1]*/
+                            get_field(ri, 8,0xf)  << 1  | /* [4:1]*/
                             0x0,13);
             funct3  = get_field(ri,12,0x7);
             rs1     = get_field(ri,15,0x1f);

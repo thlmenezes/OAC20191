@@ -6,7 +6,6 @@
  * brief   Define instruction
  * simulation procedures.
  */
-// TODO: 4
 #ifndef __EXECUTE_HPP__
 #define __EXECUTE_HPP__
 
@@ -170,13 +169,13 @@ void execute(){
         case StoreType:
             switch (funct3){
                 case SB3:
-                    sb(rs1,imm12_s,rs2 & 0xff);
+                    sb(reg[rs1],imm12_s,reg[rs2] & 0xff);
                     break;
                 case SH3:
-                    sh(rs1,imm12_s,rs2 & 0xffff);
+                    sh(reg[rs1],imm12_s,reg[rs2] & 0xffff);
                     break;
                 case SW3:
-                    sw(rs1,imm12_s,rs2);
+                    sw(reg[rs1],imm12_s,reg[rs2]);
                     break;
             }
             break;
@@ -219,11 +218,13 @@ void step(){
 }
 
 void run(){
+    //TODO: Move this initialize to another place 
+    // sp = 0x3ffc; gp = 0x1800
+    reg[2] = 0x3ffc; reg[3] = 0x1800;
     while( !end_program && pc < 0xffd )
         step();
     
     printf("\n-- program is finished running ");
-    
     if( !end_program )
         printf("(dropped off bottom) --");
     else

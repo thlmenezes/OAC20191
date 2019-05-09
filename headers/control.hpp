@@ -16,12 +16,13 @@
 
 // Compact memory default
 uint32_t pc = 0x00000000,
-         ri = 0x00000000,
-         sp = 0x00003ffc,
-         gp = 0x00001800;
+         ri = 0x00000000;
+        //  sp = 0x00003ffc,
+        //  gp = 0x00001800;
 
 // Registers
 int32_t reg[32];
+
 // float  freg[32]; TODO: extra
 
 static void dump_breg(char format = 'h'){
@@ -39,14 +40,10 @@ void dump_reg(char format = 'h'){
     if(format == 'h'){
         printf("pc:\t0x%08x\n", pc);
         printf("ri:\t0x%08x\n", ri);
-        printf("sp:\t0x%08x\n", sp);
-        printf("gp:\t0x%08x\n", gp);
     }
     else{
         printf("pc:\t%8d\n", pc);
         printf("ri:\t%8d\n", ri);
-        printf("sp:\t%8d\n", sp);
-        printf("gp:\t%8d\n", gp);
     }
     dump_breg(format);
 }
