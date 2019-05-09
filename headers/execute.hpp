@@ -55,7 +55,7 @@ void execute(){
         // Type I
         case JALR:
             reg[rd] = pc;
-            pc = reg[rs1] + imm12_i;
+            pc = (reg[rs1] + imm12_i) & ~1;
             break;
         case ECALL:
             ecall(reg[17]); // ecall a7

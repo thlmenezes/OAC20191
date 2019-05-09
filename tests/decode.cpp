@@ -1,75 +1,65 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include "catch.hpp"
 
-#include "../headers/memory.hpp"
+#include "../headers/decode.hpp"
 
-TEST_CASE( "Get address: should accept different address & immediate combinations", "[ga]" ) {
-    REQUIRE( (get_address(0,6) ==
-              get_address(1,5) ==
-              get_address(2,4) ==
-              get_address(3,3) ==
-              get_address(4,2) ==
-              get_address(5,1) ==
-              get_address(6,0)) );
+TEST_CASE( "Type U: should decode to the correct fields", "[upper_imm]" ) {
+    ri = 0x2297;        // auipc x5, 0x2
+    decode();
+    REQUIRE( rd == 5 );
+    REQUIRE( imm20_u == 0x2000 );
 }
 
-TEST_CASE( "Store byte: should modify only a byte", "[sb]" ) {
-    sb(0,0,0x04);
-    REQUIRE( mem[0] == 0x04 );
-    sb(0,1,0x03);
-    REQUIRE( mem[0] == 0x0304 );
-    sb(0,2,0x02);
-    REQUIRE( mem[0] == 0x020304 );
-    sb(0,3,0x01);
-    REQUIRE( mem[0] == 0x01020304 );
-    mem[0] = 0x0; // memory clean
+TEST_CASE( "Type J: should decode to the correct fields", "[jump]" ) {
+    ri = 0xfd9ff06f;    // jal x0, 0xffffffec
+    decode();
+    REQUIRE( !rd );
+    REQUIRE( imm21 == 0xffffffd8 );
 }
 
-TEST_CASE( "Store half word: should modify only 2 bytes", "[sh]" ) {
-    sh(0,0,0xfff0);
-    REQUIRE( mem[0] == 0xfff0 );
-    sh(0,2,0x8c);
-    REQUIRE( mem[0] == 0x8cfff0 );
-    mem[0] = 0x0; // memory clean
+TEST_CASE( "Type I: should decode to the correct fields", "[imm]" ) {
+    ri = 0x28293;       // addi x5, x5, 0x0
+    decode();
+    REQUIRE( rd  == 5 );
+    REQUIRE( rs1 == 5 );
+    REQUIRE( !funct3 );
+    REQUIRE( !imm12_i );
 }
 
-TEST_CASE( "Store word: should modify 4 bytes", "[sw]" ) {
-    sw(0,0,-1);
-    REQUIRE( mem[0] == -1 );
-    mem[0] = 0x0; // memory clean
+TEST_CASE( "Type I (shift): should decode to the correct fields", "[shift]" ) {
+    ri = 0x249293;      // slli x5, x9, 0x2
+    decode();
+    REQUIRE( rd  == 5 );
+    REQUIRE( funct3   );
+    REQUIRE( rs1 == 9 );
+    REQUIRE( shamt == 2 );
+    REQUIRE( !funct7  );
 }
 
-TEST_CASE( "Load byte unsigned: should read 1 byte", "[lbu]" ) {
-    mem[0] = 0xff;
-    REQUIRE( lbu(0,0) == 0xff );
-    mem[0] = 0x0;  // memory clean
-    REQUIRE( (!lbu(0,0) && !mem[0]) );
+TEST_CASE( "Type R: should decode to the correct fields", "[reg]" ) {
+    ri = 0x13282b3;     // add x5, x5, x19
+    decode();
+    REQUIRE( rd  == 5 );
+    REQUIRE( !funct3  );
+    REQUIRE( rs1 == 5 );
+    REQUIRE( rs2 == 19);
+    REQUIRE( !funct7  );
 }
 
-TEST_CASE( "Load byte: should read 1 byte sign extended ", "[lb]" ) {
-    mem[0] = 0xff;
-    REQUIRE( lb(0,0) == -1 );
-    mem[0] = 0x0;  // memory clean
-    REQUIRE( (!lb(0,0) && !mem[0]) );
+TEST_CASE( "Type S: should decode to the correct fields", "[store]" ) {
+    ri = 0x62a223;      // sw x6, 0x4(x5)
+    decode();
+    REQUIRE( imm12_s == 4 );
+    REQUIRE( funct3  == 2 );
+    REQUIRE( rs1 == 5 );
+    REQUIRE( rs2 == 6 );
 }
 
-TEST_CASE( "Load half word unsigned: should read 2 bytes", "[lhu]" ) {
-    mem[0] = 0xffff;
-    REQUIRE( lhu(0,0) == 0xffff );
-    mem[0] = 0x0;  // memory clean
-    REQUIRE( (!lhu(0,0) && !mem[0]) );
-}
-
-TEST_CASE( "Load half word: should read 2 bytes sign extend", "[lhu]" ) {
-    mem[0] = 0xffff;
-    REQUIRE( lh(0,0) == -1 );
-    mem[0] = 0x0;  // memory clean
-    REQUIRE( (!lh(0,0) && !mem[0]) );
-}
-
-TEST_CASE( "Load word: should read 4 bytes", "[lw]" ) {
-    mem[0] = -1;
-    REQUIRE( lw(0,0) == -1 );
-    mem[0] = 0x0;  // memory clean
-    REQUIRE( (!lw(0,0) && !mem[0]) );
+TEST_CASE( "Type B: should decode to the correct fields", "[branch]" ) {
+    ri = 0x2030663;     // beq x6, x0, 0x16
+    decode();
+    REQUIRE( imm13   == 44 );
+    REQUIRE( !funct3  );
+    REQUIRE( rs1 == 6 );
+    REQUIRE( rs2 == 0 );
 }
