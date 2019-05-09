@@ -55,7 +55,7 @@ void execute(){
         // Type I
         case JALR:
             reg[rd] = pc;
-            pc = (rs1 + imm12_i) & ~1;
+            pc = reg[rs1] + imm12_i;
             break;
         case ECALL:
             ecall(reg[17]); // ecall a7
@@ -223,11 +223,10 @@ void run(){
     reg[2] = 0x3ffc; reg[3] = 0x1800;
     while( !end_program && pc < 0xffd )
         step();
-    
     printf("\n-- program is finished running ");
     if( !end_program )
         printf("(dropped off bottom) --");
     else
-        printf("--");   
+        printf("--");
 }
 #endif
