@@ -18,6 +18,8 @@
 
 static bool end_program = false;
 
+static bool init = true;
+
 static void ecall(int32_t service){
     switch (service)
     {
@@ -212,15 +214,18 @@ void execute(){
 }
 
 void step(){
+    if (init){
+        //TODO: Move this initialize to another place 
+        // sp = 0x3ffc; gp = 0x1800
+        reg[2] = 0x3ffc; reg[3] = 0x1800;
+        init = false;
+    }
     fetch();
     decode();
     execute();
 }
 
 void run(){
-    //TODO: Move this initialize to another place 
-    // sp = 0x3ffc; gp = 0x1800
-    reg[2] = 0x3ffc; reg[3] = 0x1800;
     while( !end_program && pc < 0xffd )
         step();
     printf("\n-- program is finished running ");
