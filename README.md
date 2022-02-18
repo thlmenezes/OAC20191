@@ -1,6 +1,6 @@
-# OAC20191
+# Simulador RISC-V (parcial)
 
-RISC-V CLI simulator
+Implementação de simulador de parte da RISC-V em formato CLI, [Artigo](./Relatorio_OAC_Trabalho_3_Simulador_RISC_V.pdf)
 
 ## Dependências
 - gcc
